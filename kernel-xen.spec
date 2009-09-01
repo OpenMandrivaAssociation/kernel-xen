@@ -148,6 +148,11 @@ install -d -m 755 %{buildroot}/boot
 %make install INSTALL_PATH=%{buildroot}/boot
 %make modules_install INSTALL_MOD_PATH=%{buildroot}
 
+# have versionned files in /boot
+mv %{buildroot}/boot/vmlinuz %{buildroot}/boot/vmlinuz-%{kernel_file_string}
+mv %{buildroot}/boot/System.map %{buildroot}/boot/System.map-%{kernel_file_string}
+install -m 644 .config %{buildroot}/boot/config-%{kernel_file_string}
+
 # remove firmwares
 rm -rf %{buildroot}/lib/firmware
 
