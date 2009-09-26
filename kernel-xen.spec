@@ -1,6 +1,6 @@
 %define name                    kernel-xen
 %define version                 2.6.30.2
-%define rel                     1
+%define rel                     2
 %define kernel_version          2.6.30.2
 %define kernel_extraversion     xen-%{rel}mdv
 # ensures file uniqueness
@@ -132,7 +132,72 @@ use debugging/monitoring tool (like systemtap, oprofile, ...)
 
 %prep
 %setup -q -n linux-%{kernel_version}
-%apply_patches
+%patch60000 -p 1
+%patch60001 -p 1
+%patch60002 -p 1
+%patch60003 -p 1
+%patch60004 -p 1
+%patch60005 -p 1
+%patch60006 -p 1
+%patch60007 -p 1
+%patch60008 -p 1
+%patch60009 -p 1
+%patch60010 -p 1
+%patch60011 -p 1
+%patch60012 -p 1
+%patch60013 -p 1
+%patch60014 -p 1
+%patch60015 -p 1
+%patch60016 -p 1
+%patch60017 -p 1
+%patch60018 -p 1
+%patch60019 -p 1
+%patch60020 -p 1
+%patch60021 -p 1
+%patch60022 -p 1
+%patch60023 -p 1
+%patch60024 -p 1
+%patch60025 -p 1
+%patch60026 -p 1
+%patch60027 -p 1
+%patch60028 -p 1
+%patch60029 -p 1
+%patch60030 -p 1
+%patch60031 -p 1
+%patch60032 -p 1
+%patch60033 -p 1
+%patch60034 -p 1
+%patch60035 -p 1
+%patch60036 -p 1
+%patch60037 -p 1
+%patch60038 -p 1
+%patch60039 -p 1
+%patch60040 -p 1
+%patch60041 -p 1
+%patch60042 -p 1
+%patch60043 -p 1
+%patch60044 -p 1
+%patch60045 -p 1
+%patch60046 -p 1
+%patch60047 -p 1
+%patch60048 -p 1
+%patch60049 -p 1
+%patch60050 -p 1
+%patch60051 -p 1
+%patch60052 -p 1
+%patch60053 -p 1
+%patch60054 -p 1
+%patch60055 -p 1
+%patch60056 -p 1
+%patch60057 -p 1
+%patch60058 -p 1
+%patch60059 -p 1
+%patch60060 -p 1
+%patch60061 -p 1
+%patch60062 -p 1
+%patch60063 -p 1
+%patch60064 -p 1
+%patch60065 -p 1
 perl -pi -e 's/EXTRAVERSION = (.*)/EXTRAVERSION = $1-%{kernel_extraversion}/' \
     Makefile
 
