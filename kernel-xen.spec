@@ -262,6 +262,12 @@ do
 done
 popd
 
+%post -n kernel-xen-%{kernel_package_string}
+/sbin/installkernel -L %{kernel_file_string}
+
+%postun -n kernel-xen-%{kernel_package_string}
+/sbin/kernel_remove_initrd %{kernel_file_string}
+
 %post -n kernel-xen-devel-%{kernel_package_string}
 if [ -d /lib/modules/%{kernel_file_string} ]; then
     ln -sTf /usr/src/linux-%{kernel_file_string} /lib/modules/%{kernel_file_string}/build
