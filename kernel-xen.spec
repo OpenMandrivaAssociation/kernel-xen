@@ -1,6 +1,6 @@
 %define name                    kernel-xen
 %define version                 2.6.30.2
-%define rel                     2
+%define rel                     3
 %define kernel_version          2.6.30.2
 %define kernel_extraversion     xen-%{rel}mdv
 # ensures file uniqueness
@@ -210,15 +210,13 @@ cp -f %config .config
 %install
 rm -rf %{buildroot}
 install -d -m 755 %{buildroot}/boot
-%__make install INSTALL_PATH=%{buildroot}/boot
-%__make modules_install INSTALL_MOD_PATH=%{buildroot}
+install -m 644 System.map %{buildroot}/boot/System.map-%{kernel_file_string}
+install -m 644 .config %{buildroot}/boot}/config-%{kernel_file_string}
+install -m 644 arch/x86/boot/vmlinuz \
+    %{buildroot}/boot}/vmlinuz-%{kernel_file_string}
 
-# have versionned files in /boot
-mv %{buildroot}/boot/vmlinuz \
-    %{buildroot}/boot/vmlinuz-%{kernel_file_string}
-mv %{buildroot}/boot/System.map \
-    %{buildroot}/boot/System.map-%{kernel_file_string}
-install -m 644 .config %{buildroot}/boot/config-%{kernel_file_string}
+# modules
+%make modules_install INSTALL_MOD_PATH=%{buildroot}
 
 # remove firmwares
 rm -rf %{buildroot}/lib/firmware
