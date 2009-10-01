@@ -1,6 +1,6 @@
 %define name                    kernel-xen
 %define version                 2.6.30.2
-%define rel                     3
+%define rel                     4
 %define kernel_version          2.6.30.2
 %define kernel_extraversion     xen-%{rel}mdv
 # ensures file uniqueness
@@ -90,6 +90,8 @@ Patch60062:	60062_xen-x86_64-pgd-alloc-order.patch1
 Patch60063:	60063_xen-x86_64-dump-user-pgt.patch1
 Patch60064:	60064_xen-x86_64-note-init-p2m.patch1
 Patch60065:	60065_xen-x86-blktap2-nosmp.patch1
+# fix build with gcc 4.3
+Patch70000: clobber-induction-variable.patch
 BuildRoot:  %{_tmppath}/%{name}-%{version}
 
 %description 
@@ -198,6 +200,7 @@ use debugging/monitoring tool (like systemtap, oprofile, ...)
 %patch60063 -p 1
 %patch60064 -p 1
 %patch60065 -p 1
+%patch70000 -p 1
 perl -pi -e 's/EXTRAVERSION = (.*)/EXTRAVERSION = $1-%{kernel_extraversion}/' \
     Makefile
 
