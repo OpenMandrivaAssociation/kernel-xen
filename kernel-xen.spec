@@ -211,7 +211,7 @@ cp -f %config .config
 rm -rf %{buildroot}
 install -d -m 755 %{buildroot}/boot
 install -m 644 System.map %{buildroot}/boot/System.map-%{kernel_file_string}
-install -m 644 .config %{buildroot}/boot}/config-%{kernel_file_string}
+install -m 644 .config %{buildroot}/boot/config-%{kernel_file_string}
 install -m 644 arch/x86/boot/vmlinuz \
     %{buildroot}/boot}/vmlinuz-%{kernel_file_string}
 
