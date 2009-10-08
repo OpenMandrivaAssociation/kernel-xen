@@ -1,6 +1,6 @@
 %define name                    kernel-xen
 %define version                 2.6.30.2
-%define rel                     4
+%define rel                     5
 %define kernel_version          2.6.30.2
 %define kernel_extraversion     xen-%{rel}mdv
 # ensures file uniqueness
@@ -236,6 +236,9 @@ find %{buildroot}/lib/modules/%{kernel_file_string}/kernel -name *.ko \
 find %{buildroot}/lib/modules/%{kernel_file_string}/kernel -name *.ko.debug | \
     sed -e 's|%{buildroot}||' > kernel_debug_files
 
+# create an exclusion list for those debug files
+sed -e 's|^|%exclude |' < kernel_debug_files > no_kernel_debug_files
+
 # compress modules
 find %{buildroot}/lib/modules/%{kernel_file_string} -name *.ko | xargs gzip -9
 /sbin/depmod -u -ae -b %{buildroot} -r \
@@ -288,7 +291,7 @@ fi
 %clean
 rm -rf %{buildroot}
 
-%files -n kernel-xen-%{kernel_package_string}
+%files -n kernel-xen-%{kernel_package_string} -f no_kernel_debug_files
 %defattr(-,root,root)
 /lib/modules/%{kernel_file_string}
 /boot/System.map-%{kernel_file_string}
