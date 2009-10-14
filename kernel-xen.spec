@@ -272,7 +272,6 @@ popd
 
 %post -n kernel-xen-%{kernel_package_string}
 /sbin/installkernel -L %{kernel_file_string}
-/sbin/installkernel %{kversion}-$kernel_flavour-%{buildrpmrel}
 pushd /boot > /dev/null
 if [ -L vmlinuz-xen ]; then
         rm -f vmlinuz-xen
