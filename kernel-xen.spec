@@ -284,7 +284,7 @@ ln -sf initrd-%{kernel_file_string}.img initrd-xen.img
 popd > /dev/null
 
 %postun -n kernel-xen-%{kernel_package_string}
-/sbin/kernel_remove_initrd %{kernel_file_string}
+/sbin/installkernel -R %{kernel_file_string}
 pushd /boot > /dev/null
 if [ -L vmlinuz-xen ]; then
         if [ "$(readlink vmlinuz-xen)" = "vmlinuz-%{kernel_file_string}" ]; then
