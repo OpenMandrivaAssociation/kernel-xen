@@ -1,6 +1,6 @@
 %define name                    kernel-xen
 %define version                 2.6.30.2
-%define rel                     5
+%define rel                     6
 %define kernel_version          2.6.30.2
 %define kernel_extraversion     xen-%{rel}mdv
 # ensures file uniqueness
