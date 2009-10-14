@@ -272,9 +272,32 @@ popd
 
 %post -n kernel-xen-%{kernel_package_string}
 /sbin/installkernel -L %{kernel_file_string}
+/sbin/installkernel %{kversion}-$kernel_flavour-%{buildrpmrel}
+pushd /boot > /dev/null
+if [ -L vmlinuz-xen ]; then
+        rm -f vmlinuz-xen
+fi
+ln -sf vmlinuz-%{kernel_file_string} vmlinuz-xen
+if [ -L initrd-xen.img ]; then
+        rm -f initrd-xen.img
+fi
+ln -sf initrd-%{kernel_file_string}.img initrd-xen.img
+popd > /dev/null
 
 %postun -n kernel-xen-%{kernel_package_string}
 /sbin/kernel_remove_initrd %{kernel_file_string}
+pushd /boot > /dev/null
+if [ -L vmlinuz-xen ]; then
+        if [ "$(readlink vmlinuz-xen)" = "vmlinuz-%{kernel_file_string}" ]; then
+                rm -f vmlinuz-xen
+        fi
+fi
+if [ -L initrd-xen.img ]; then
+        if [ "$(readlink initrd-xen.img)" = "initrd-%{kernel_file_string}.img" ]; then
+                rm -f initrd-xen.img
+        fi
+fi
+popd > /dev/null
 
 %post -n kernel-xen-devel-%{kernel_package_string}
 if [ -d /lib/modules/%{kernel_file_string} ]; then
