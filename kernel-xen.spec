@@ -104,7 +104,7 @@ Summary:    XEN kernel
 Group:      System/Kernel and hardware
 Provides:   kernel = %{kernel_version}
 Provides:   kernel-xen = %{kernel_version}
-Requires(post):	bootloader-utils mkinitrd xen
+Requires(post):	bootloader-utils mkinitrd xen-hypervisor
 Requires(postun):	bootloader-utils
 
 %description -n kernel-xen-%{kernel_package_string}
@@ -271,7 +271,7 @@ done
 popd
 
 %post -n kernel-xen-%{kernel_package_string}
-/sbin/installkernel -L %{kernel_file_string}
+/sbin/installkernel %{kernel_file_string}
 pushd /boot > /dev/null
 if [ -L vmlinuz-xen ]; then
         rm -f vmlinuz-xen
