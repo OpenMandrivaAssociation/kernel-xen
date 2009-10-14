@@ -104,7 +104,7 @@ Summary:    XEN kernel
 Group:      System/Kernel and hardware
 Provides:   kernel = %{kernel_version}
 Provides:   kernel-xen = %{kernel_version}
-Requires(post):	bootloader-utils mkinitrd
+Requires(post):	bootloader-utils mkinitrd xen
 Requires(postun):	bootloader-utils
 
 %description -n kernel-xen-%{kernel_package_string}
