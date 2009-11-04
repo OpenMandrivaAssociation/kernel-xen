@@ -7,6 +7,7 @@
 %define kernel_file_string      %{kernel_version}-xen-%{rel}mdv
 # ensures package uniqueness
 %define kernel_package_string   %{kernel_version}-%{rel}mdv
+%define kernel_source_dir       %{_prefix}/src/linux-%{kernel_file_string}
 
 %ifarch %ix86
 %define config %{SOURCE1}
@@ -115,7 +116,6 @@ Version:    1
 Release:    %mkrel 1
 Summary:    XEN kernel sources
 Group:      System/Kernel and hardware
-Requires:   kernel-xen-%{kernel_package_string}
 Provides:   kernel-devel = %{kernel_version}
 
 %description -n kernel-xen-devel-%{kernel_package_string}
@@ -236,10 +236,10 @@ find %{buildroot}/lib/modules/%{kernel_file_string}/kernel -name *.ko \
 find %{buildroot}/lib/modules/%{kernel_file_string}/kernel -name *.ko \
     -exec objcopy --add-gnu-debuglink='{}'.debug --strip-debug '{}' \;
 find %{buildroot}/lib/modules/%{kernel_file_string}/kernel -name *.ko.debug | \
-    sed -e 's|%{buildroot}||' > kernel_debug_files
+    sed -e 's|%{buildroot}||' > kernel_debug_files.list
 
 # create an exclusion list for those debug files
-sed -e 's|^|%exclude |' < kernel_debug_files > no_kernel_debug_files
+sed -e 's|^|%exclude |' < kernel_debug_files.list > no_kernel_debug_files.list
 
 # compress modules
 find %{buildroot}/lib/modules/%{kernel_file_string} -name *.ko | xargs gzip -9
@@ -255,20 +255,35 @@ find . -name *.ko.gz | xargs /sbin/modinfo | \
 popd
 
 # install kernel sources
-install -d -m 755 %{buildroot}%{_prefix}/src/linux-%{kernel_file_string}
-tar xjf %{SOURCE0} \
-    -C %{buildroot}%{_prefix}/src/linux-%{kernel_file_string} \
-    --strip-components=1
+install -d -m 755 %{buildroot}%{kernel_source_dir}
+tar cf - . \
+    --exclude '*.o' --exclude '*.ko'  --exclude '*.cmd' \
+    --exclude '.temp*' --exclude '.tmp*' \
+    --exclude modules.order --exclude .gitignore \
+    | tar xf - -C %{buildroot}%{kernel_source_dir}
+chmod -R a+rX %{buildroot}%{kernel_source_dir}
 
-# clean sources from useless source files
-pushd %{buildroot}%{_prefix}/src/linux-%{kernel_file_string}
-for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 m32r mips m68k \
-         m68knommu mn10300 parisc powerpc s390 sh sh64 sparc sparc64 v850 xtensa
-do
-	rm -rf arch/$i
-	rm -rf include/asm-$i
+# we remove all the source files that we don't ship
+# first architecture files
+for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 microblaze mips \
+    m32r m68k m68knommu mn10300 parisc powerpc ppc s390 sh sh64 sparc v850 xtensa; do
+    rm -rf %{buildroot}%{kernel_source_dir}/arch/$i
+    rm -rf %{buildroot}%{kernel_source_dir}/include/asm-$i
 done
-popd
+
+%ifnarch %{ix86} x86_64
+    rm -rf %{buildroot}%{kernel_source_dir}/arch/x86
+    rm -rf %{buildroot}%{kernel_source_dir}/include/asm-x86
+%endif
+
+rm -rf %{buildroot}%{kernel_source_dir}/vmlinux
+rm -rf %{buildroot}%{kernel_source_dir}/System.map
+rm -rf %{buildroot}%{kernel_source_dir}/Module.*
+rm -rf %{buildroot}%{kernel_source_dir}/*.list
+rm -rf %{buildroot}%{kernel_source_dir}/.config.*
+rm -rf %{buildroot}%{kernel_source_dir}/.missing-syscalls.d
+rm -rf %{buildroot}%{kernel_source_dir}/.version
+rm -rf %{buildroot}%{kernel_source_dir}/.mailmap
 
 %post -n kernel-xen-%{kernel_package_string}
 /sbin/installkernel %{kernel_file_string}
@@ -300,8 +315,8 @@ popd > /dev/null
 
 %post -n kernel-xen-devel-%{kernel_package_string}
 if [ -d /lib/modules/%{kernel_file_string} ]; then
-    ln -sTf /usr/src/linux-%{kernel_file_string} /lib/modules/%{kernel_file_string}/build
-    ln -sTf /usr/src/linux-%{kernel_file_string} /lib/modules/%{kernel_file_string}/source
+    ln -sTf %{kernel_source_dir} /lib/modules/%{kernel_file_string}/build
+    ln -sTf %{kernel_source_dir} /lib/modules/%{kernel_file_string}/source
 fi
 
 %postun -n kernel-xen-devel-%{kernel_package_string}
@@ -315,7 +330,7 @@ fi
 %clean
 rm -rf %{buildroot}
 
-%files -n kernel-xen-%{kernel_package_string} -f no_kernel_debug_files
+%files -n kernel-xen-%{kernel_package_string} -f no_kernel_debug_files.list
 %defattr(-,root,root)
 /lib/modules/%{kernel_file_string}
 /boot/System.map-%{kernel_file_string}
@@ -324,7 +339,7 @@ rm -rf %{buildroot}
 
 %files -n kernel-xen-devel-%{kernel_package_string}
 %defattr(-,root,root)
-%{_prefix}/src/linux-%{kernel_file_string}
+%{kernel_source_dir}
 
-%files -n kernel-xen-debug-%{kernel_package_string} -f kernel_debug_files
+%files -n kernel-xen-debug-%{kernel_package_string} -f kernel_debug_files.list
 %defattr(-,root,root)
