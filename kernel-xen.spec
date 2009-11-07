@@ -1,13 +1,14 @@
 %define name                    kernel-xen
 %define version                 2.6.30.2
-%define rel                     6
+%define rel                     7
 %define kernel_version          2.6.30.2
 %define kernel_extraversion     xen-%{rel}mdv
 # ensures file uniqueness
 %define kernel_file_string      %{kernel_version}-xen-%{rel}mdv
 # ensures package uniqueness
 %define kernel_package_string   %{kernel_version}-%{rel}mdv
-%define kernel_source_dir       %{_prefix}/src/linux-%{kernel_file_string}
+%define kernel_source_dir       %{_prefix}/src/kernel-xen-%{kernel_version}-%{rel}mdv
+%define kernel_devel_dir        %{_prefix}/src/kernel-xen-devel-%{kernel_version}-%{rel}mdv
 
 %ifarch %ix86
 %define config %{SOURCE1}
@@ -25,6 +26,9 @@ License:    GPL
 Source0:    linux-%{version}.tar.bz2
 Source1:    i386_defconfig-server
 Source2:    x86_64_defconfig-server
+
+Source12:   disable-mrproper-in-devel-rpms.patch
+Source13:   kbuild-really-dont-remove-bounds-asm-offsets-headers.patch
 Patch60000:	60000_add-console-use-vt.patch1
 Patch60001:	60001_linux-2.6.19-rc1-kexec-move_segment_code-i386.patch1
 Patch60002:	60002_linux-2.6.19-rc1-kexec-move_segment_code-x86_64.patch1
@@ -114,12 +118,27 @@ The XEN kernel.
 %package -n kernel-xen-devel-%{kernel_package_string}
 Version:    1
 Release:    %mkrel 1
-Summary:    XEN kernel sources
+Summary:    XEN kernel devel files
 Group:      System/Kernel and hardware
 Provides:   kernel-devel = %{kernel_version}
+Autoreqprov: no
 
 %description -n kernel-xen-devel-%{kernel_package_string}
-XEN kernel sources.
+This package contains the kernel-devel files that should be enough to build 
+3rdparty drivers against for use with the %{kname}-%{buildrel}.
+
+%package -n kernel-xen-source-%{kernel_package_string}
+Version:    1
+Release:    %mkrel 1
+Summary:    XEN kernel sources
+Group:      System/Kernel and hardware
+Provides:   kernel-source = %{kernel_version}
+Autoreqprov: no
+
+%description -n kernel-xen-source-%{kernel_package_string}
+This package contains the source code files for the Linux 
+kernel. Theese source files are only needed if you want to build your own 
+custom kernel that is better tuned to your particular hardware.
 
 %package -n kernel-xen-debug-%{kernel_package_string}
 Version:  1
@@ -133,6 +152,20 @@ Autoreqprov: no
 %description -n kernel-xen-debug-%{kernel_package_string}
 This package contains the kernel-debug files that should be enough to 
 use debugging/monitoring tool (like systemtap, oprofile, ...)
+
+%package -n kernel-xen-doc-%{kernel_package_string}
+Version:    1
+Release:    %mkrel 1
+Summary:    XEN kernel documentation
+Group:      System/Kernel and hardware
+Autoreqprov: no
+
+%description -n kernel-xen-doc-%{kernel_package_string}
+This package contains documentation files form the kernel source. Various
+bits of information about the Linux kernel and the device drivers shipped
+with it are documented in these files. You also might want install this
+package if you need a reference to the options that can be passed to Linux
+kernel modules at load time.
 
 %prep
 %setup -q -n linux-%{kernel_version}
@@ -285,6 +318,49 @@ rm -rf %{buildroot}%{kernel_source_dir}/.missing-syscalls.d
 rm -rf %{buildroot}%{kernel_source_dir}/.version
 rm -rf %{buildroot}%{kernel_source_dir}/.mailmap
 
+# install devel files 
+install -d -m 755 %{buildroot}%{kernel_devel_dir}
+for i in $(find . -name 'Makefile*'); do
+    cp -R --parents $i %{buildroot}%{kernel_devel_dir};
+done
+for i in $(find . -name 'Kconfig*' -o -name 'Kbuild*'); do
+    cp -R --parents $i %{buildroot}%{kernel_devel_dir};
+done
+cp -fR include %{buildroot}%{kernel_devel_dir}
+cp -fR scripts %{buildroot}%{kernel_devel_dir}
+%ifarch %{ix86} x86_64
+    cp -fR arch/x86/kernel/asm-offsets.{c,s} \
+        %{buildroot}%{kernel_devel_dir}/arch/x86/kernel/
+    cp -fR arch/x86/kernel/asm-offsets_{32,64}.c \
+        %{buildroot}%{kernel_devel_dir}/arch/x86/kernel/
+    cp -fR arch/x86/include %{buildroot}%{kernel_devel_dir}/arch/x86/
+%else
+    cp -fR arch/%{target_arch}/kernel/asm-offsets.{c,s} \
+        %{buildroot}%{kernel_devel_dir}/arch/%{target_arch}/kernel/
+    cp -fR arch/%{target_arch}/include \
+        %{buildroot}%{kernel_devel_dir}/arch/%{target_arch}/
+%endif
+cp -fR .config Module.symvers %{buildroot}%{kernel_devel_dir}
+
+# Needed for truecrypt build (Danny)
+cp -fR drivers/md/dm.h %{buildroot}%{kernel_devel_dir}/drivers/md/
+
+# Needed for external dvb tree (#41418)
+cp -fR drivers/media/dvb/dvb-core/*.h \
+    %{buildroot}%{kernel_devel_dir}/drivers/media/dvb/dvb-core/
+cp -fR drivers/media/dvb/frontends/lgdt330x.h \
+    %{buildroot}%{kernel_devel_dir}/drivers/media/dvb/frontends/
+
+# add acpica header files, needed for fglrx build
+cp -fR drivers/acpi/acpica/*.h \
+    %{buildroot}%{kernel_devel_dir}/drivers/acpi/acpica/
+
+# disable mrproper
+patch -p1 -d %{buildroot}%{kernel_devel_dir} -i %{SOURCE12}
+
+# disable bounds.h and asm-offsets.h removal
+patch -p1 -d %{buildroot}%{kernel_devel_dir} -i %{SOURCE13}
+
 %post -n kernel-xen-%{kernel_package_string}
 /sbin/installkernel %{kernel_file_string}
 pushd /boot > /dev/null
@@ -315,16 +391,30 @@ popd > /dev/null
 
 %post -n kernel-xen-devel-%{kernel_package_string}
 if [ -d /lib/modules/%{kernel_file_string} ]; then
-    ln -sTf %{kernel_source_dir} /lib/modules/%{kernel_file_string}/build
-    ln -sTf %{kernel_source_dir} /lib/modules/%{kernel_file_string}/source
+    ln -sf %{kernel_devel_dir} /lib/modules/%{kernel_file_string}/build
+    ln -sf %{kernel_devel_dir} /lib/modules/%{kernel_file_string}/source
 fi
 
-%postun -n kernel-xen-devel-%{kernel_package_string}
+%preun -n kernel-xen-devel-%{kernel_package_string}
 if [ -L /lib/modules/%{kernel_file_string}/build ]; then
-    rm -f /lib/modules/%{kernel_file_string}/build
+    rm -f /lib/modules/%{kernel_devel_string}/build
 fi
 if [ -L /lib/modules/%{kernel_file_string}/source ]; then
-    rm -f /lib/modules/%{kernel_file_string}/source
+    rm -f /lib/modules/%{kernel_devel_string}/source
+fi
+
+%post -n kernel-xen-source-%{kernel_package_string}
+if [ -d /lib/modules/%{kernel_file_string} ]; then
+    ln -sf %{kernel_source_dir} /lib/modules/%{kernel_file_string}/build
+    ln -sf %{kernel_source_dir} /lib/modules/%{kernel_file_string}/source
+fi
+
+%preun -n kernel-xen-source-%{kernel_package_string}
+if [ -L /lib/modules/%{kernel_file_string}/build ]; then
+    rm -f /lib/modules/%{kernel_source_string}/build
+fi
+if [ -L /lib/modules/%{kernel_file_string}/source ]; then
+    rm -f /lib/modules/%{kernel_source_string}/source
 fi
 
 %clean
@@ -339,7 +429,16 @@ rm -rf %{buildroot}
 
 %files -n kernel-xen-devel-%{kernel_package_string}
 %defattr(-,root,root)
+%{kernel_devel_dir}
+
+%files -n kernel-xen-source-%{kernel_package_string}
+%defattr(-,root,root)
 %{kernel_source_dir}
+%exclude %{kernel_source_dir}/Documentation
+
+%files -n kernel-xen-doc-%{kernel_package_string}
+%defattr(-,root,root)
+%{kernel_source_dir}/Documentation
 
 %files -n kernel-xen-debug-%{kernel_package_string} -f kernel_debug_files.list
 %defattr(-,root,root)
