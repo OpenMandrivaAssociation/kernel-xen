@@ -1,7 +1,7 @@
 %define name                    kernel-xen
-%define version                 2.6.31.6
+%define version                 2.6.31.12
 %define rel                     1
-%define kernel_version          2.6.31.6
+%define kernel_version          2.6.31.12
 %define kernel_extraversion     xen-%{rel}mdv
 # ensures file uniqueness
 %define kernel_file_string      %{kernel_version}-xen-%{rel}mdv
@@ -31,76 +31,82 @@ Source2:    x86_64_defconfig-server
 
 Source12:   disable-mrproper-in-devel-rpms.patch
 Source13:   kbuild-really-dont-remove-bounds-asm-offsets-headers.patch
-Patch60000:	60000_add-console-use-vt.patch1
-Patch60001:	60001_linux-2.6.19-rc1-kexec-move_segment_code-i386.patch1
-Patch60002:	60002_linux-2.6.19-rc1-kexec-move_segment_code-x86_64.patch1
-Patch60003:	60003_ipv6-no-autoconf.patch1
-Patch60004:	60004_pci-guestdev.patch1
-Patch60005:	60005_pci-reserve.patch1
-Patch60006:	60006_sfc-driverlink.patch1
-Patch60007:	60007_sfc-resource-driver.patch1
-Patch60008:	60008_sfc-driverlink-conditional.patch1
-Patch60009:	60009_sfc-external-sram.patch1
-Patch60010:	60010_xen3-auto-xen-arch.patch1
-Patch60011:	60011_xen3-auto-xen-drivers.patch1
-Patch60012:	60012_xen3-auto-include-xen-interface.patch1
-Patch60013:	60013_xen3-auto-xen-kconfig.patch1
-Patch60014:	60014_xen3-auto-common.patch1
-Patch60015:	60015_xen3-auto-arch-x86.patch1
-Patch60016:	60016_xen3-auto-arch-i386.patch1
-Patch60017:	60017_xen3-auto-arch-x86_64.patch1
-Patch60018:	60018_xen3-fixup-xen.patch1
-Patch60019:	60019_sfc-sync-headers.patch1
-Patch60020:	60020_sfc-endianness.patch1
-Patch60021:	60021_xen3-fixup-kconfig.patch1
-Patch60022:	60022_xen3-fixup-common.patch1
-Patch60023:	60023_xen3-fixup-arch-x86.patch1
-Patch60024:	60024_xen3-patch-2.6.18.patch1
-Patch60025:	60025_xen3-patch-2.6.19.patch1
-Patch60026:	60026_xen3-patch-2.6.20.patch1
-Patch60027:	60027_xen3-patch-2.6.21.patch1
-Patch60028:	60028_xen3-patch-2.6.22.patch1
-Patch60029:	60029_xen3-patch-2.6.23.patch1
-Patch60030:	60030_xen3-patch-2.6.24.patch1
-Patch60031:	60031_xen3-patch-2.6.25.patch1
-Patch60032:	60032_xen3-patch-2.6.26.patch1
-Patch60033:	60033_xen3-patch-2.6.27.patch1
-Patch60034:	60034_xen3-patch-2.6.28.patch1
-Patch60035:	60035_xen3-patch-2.6.29.patch1
-Patch60036:	60036_xen3-patch-2.6.30.patch1
-Patch60037:	60037_xen3-patch-2.6.31.patch1
-Patch60038:	60038_xen3-patch-2.6.31.1.patch1
-Patch60039:	60039_xen3-patch-2.6.31.1-2.patch1
-Patch60040:	60040_xen3-patch-2.6.31.3-4.patch1
-Patch60041:	60041_xen-balloon-max-target.patch1
-Patch60042:	60042_xen-blkback-cdrom.patch1
-Patch60043:	60043_xen-blktap-write-barriers.patch1
-Patch60044:	60044_xen-scsifront-block-timeout-update.patch1
-Patch60045:	60045_xen-op-packet.patch1
-Patch60046:	60046_xen-blkfront-cdrom.patch1
-Patch60047:	60047_xen-sections.patch1
-Patch60048:	60048_xen-kconfig-compat.patch1
-Patch60049:	60049_xen-cpufreq-report.patch1
-Patch60050:	60050_xen-staging-build.patch1
-Patch60051:	60051_xen-sysdev-suspend.patch1
-Patch60052: 60052_xen-ipi-per-cpu-irq.patch1
-Patch60053:	60053_xen-virq-per-cpu-irq.patch1
-Patch60054:	60054_xen-configurable-guest-devices.patch1
-Patch60055:	60055_xen-netback-nr-irqs.patch1
-Patch60056:	60056_xen-netback-notify-multi.patch1
-Patch60057:	60057_xen-x86-panic-no-reboot.patch1
-Patch60058:	60058_xen-x86-dcr-fallback.patch1
-Patch60059:	60059_xen-x86-consistent-nmi.patch1
-Patch60060:	60060_xen-x86-no-lapic.patch1
-Patch60061:	60061_xen-x86-pmd-handling.patch1
-Patch60062:	60062_xen-x86-bigmem.patch1
-Patch60063:	60063_xen-x86-machphys-prediction.patch1
-Patch60064:	60064_xen-x86-exit-mmap.patch1
-Patch60065:	60065_xen-x86-per-cpu-vcpu-info.patch1
-Patch60066:	60066_xen-x86_64-pgd-pin.patch1
-Patch60067:	60067_xen-x86_64-pgd-alloc-order.patch1
-Patch60068:	60068_xen-x86_64-dump-user-pgt.patch1
-Patch60069:	60069_xen-x86_64-note-init-p2m.patch1
+Patch60000: 60000_add-console-use-vt.patch1
+Patch60001: 60001_linux-2.6.19-rc1-kexec-move_segment_code-i386.patch1
+Patch60002: 60002_linux-2.6.19-rc1-kexec-move_segment_code-x86_64.patch1
+Patch60003: 60003_ipv6-no-autoconf.patch1
+Patch60004: 60004_pci-guestdev.patch1
+Patch60005: 60005_pci-reserve.patch1
+Patch60006: 60006_sfc-driverlink.patch1
+Patch60007: 60007_sfc-resource-driver.patch1
+Patch60008: 60008_sfc-driverlink-conditional.patch1
+Patch60009: 60009_sfc-external-sram.patch1
+Patch60010: 60010_xen3-auto-xen-arch.patch1
+Patch60011: 60011_xen3-auto-xen-drivers.patch1
+Patch60012: 60012_xen3-auto-include-xen-interface.patch1
+Patch60013: 60013_xen3-auto-xen-kconfig.patch1
+Patch60014: 60014_xen3-auto-common.patch1
+Patch60015: 60015_xen3-auto-arch-x86.patch1
+Patch60016: 60016_xen3-auto-arch-i386.patch1
+Patch60017: 60017_xen3-auto-arch-x86_64.patch1
+Patch60018: 60018_xen3-fixup-xen.patch1
+Patch60019: 60019_sfc-sync-headers.patch1
+Patch60020: 60020_sfc-endianness.patch1
+Patch60021: 60021_941-xenbus-transaction-mutex.patch1
+Patch60022: 60022_945-MSI-disable-check.patch1
+Patch60023: 60023_958-fbfront-resume.patch1
+Patch60024: 60024_959-netback-delayed-copy-cleanup.patch1
+Patch60025: 60025_xen3-fixup-kconfig.patch1
+Patch60026: 60026_xen3-fixup-common.patch1
+Patch60027: 60027_xen3-fixup-arch-x86.patch1
+Patch60028: 60028_xen3-patch-2.6.18.patch1
+Patch60029: 60029_xen3-patch-2.6.19.patch1
+Patch60030: 60030_xen3-patch-2.6.20.patch1
+Patch60031: 60031_xen3-patch-2.6.21.patch1
+Patch60032: 60032_xen3-patch-2.6.22.patch1
+Patch60033: 60033_xen3-patch-2.6.23.patch1
+Patch60034: 60034_xen3-patch-2.6.24.patch1
+Patch60035: 60035_xen3-patch-2.6.25.patch1
+Patch60036: 60036_xen3-patch-2.6.26.patch1
+Patch60037: 60037_xen3-patch-2.6.27.patch1
+Patch60038: 60038_xen3-patch-2.6.28.patch1
+Patch60039: 60039_xen3-patch-2.6.29.patch1
+Patch60040: 60040_xen3-patch-2.6.30.patch1
+Patch60041: 60041_xen3-patch-2.6.31.patch1
+Patch60042: 60042_xen3-patch-2.6.31.1.patch1
+Patch60043: 60043_xen3-patch-2.6.31.1-2.patch1
+Patch60044: 60044_xen3-patch-2.6.31.3-4.patch1
+Patch60045: 60045_xen3-patch-2.6.31.5-6.patch1
+Patch60046: 60046_xen-balloon-max-target.patch1
+Patch60047: 60047_xen-blkback-cdrom.patch1
+Patch60048: 60048_xen-blktap-write-barriers.patch1
+Patch60049: 60049_xen-scsifront-block-timeout-update.patch1
+Patch60050: 60050_xen-op-packet.patch1
+Patch60051: 60051_xen-blkfront-cdrom.patch1
+Patch60052: 60052_xen-sections.patch1
+Patch60053: 60053_xen-kconfig-compat.patch1
+Patch60054: 60054_xen-cpufreq-report.patch1
+Patch60055: 60055_xen-staging-build.patch1
+Patch60056: 60056_xen-sysdev-suspend.patch1
+Patch60057: 60057_xen-ipi-per-cpu-irq.patch1
+Patch60058: 60058_xen-virq-per-cpu-irq.patch1
+Patch60059: 60059_xen-configurable-guest-devices.patch1
+Patch60060: 60060_xen-netback-nr-irqs.patch1
+Patch60061: 60061_xen-netback-notify-multi.patch1
+Patch60062: 60062_xen-vmalloc_32.patch1
+Patch60063: 60063_xen-x86-panic-no-reboot.patch1
+Patch60064: 60064_xen-x86-dcr-fallback.patch1
+Patch60065: 60065_xen-x86-consistent-nmi.patch1
+Patch60066: 60066_xen-x86-no-lapic.patch1
+Patch60067: 60067_xen-x86-pmd-handling.patch1
+Patch60068: 60068_xen-x86-bigmem.patch1
+Patch60069: 60069_xen-x86-machphys-prediction.patch1
+Patch60070: 60070_xen-x86-exit-mmap.patch1
+Patch60071: 60071_xen-x86-per-cpu-vcpu-info.patch1
+Patch60072: 60072_xen-x86_64-pgd-pin.patch1
+Patch60073: 60073_xen-x86_64-pgd-alloc-order.patch1
+Patch60074: 60074_xen-x86_64-dump-user-pgt.patch1
+Patch60075: 60075_xen-x86_64-note-init-p2m.patch1
 BuildRoot:  %{_tmppath}/%{name}-%{version}
 
 %description 
@@ -243,12 +249,18 @@ kernel modules at load time.
 %patch60067 -p 1
 %patch60068 -p 1
 %patch60069 -p 1
+%patch60070 -p 1
+%patch60071 -p 1
+%patch60072 -p 1
+%patch60073 -p 1
+%patch60074 -p 1
+%patch60075 -p 1
 perl -pi -e 's/EXTRAVERSION = (.*)/EXTRAVERSION = $1-%{kernel_extraversion}/' \
     Makefile
 
 %build
 cp -f %config .config
-%make prepare 
+%make oldconfig
 %make
 %make modules
 
