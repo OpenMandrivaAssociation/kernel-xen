@@ -1,7 +1,9 @@
 %define name                    kernel-xen
-%define version                 2.6.33
+%define version                 2.6.33.1
 %define rel                     1
-%define kernel_version          2.6.33
+%define kernel_source_version   2.6.33
+%define kernel_patch_version    1
+%define kernel_version          %{kernel_source_version}.%{kernel_patch_version}
 %define kernel_extraversion     xen-%{rel}mdv
 # ensures file uniqueness
 %define kernel_file_string      %{kernel_version}-xen-%{rel}mdv
@@ -25,12 +27,13 @@ Release:    %mkrel %{rel}
 Summary:    The Xen kernel
 Group:      System/Kernel and hardware
 License:    GPL
-Source0:    linux-%{version}.tar.bz2
+Source0:    linux-%{kernel_source_version}.tar.bz2
 Source1:    i386_defconfig-server
 Source2:    x86_64_defconfig-server
 
 Source12:   disable-mrproper-in-devel-rpms.patch
 Source13:   kbuild-really-dont-remove-bounds-asm-offsets-headers.patch
+Patch0:     patch-2.6.33.1.bz2
 Patch60000: 60000_add-console-use-vt.patch1
 Patch60001: 60001_linux-2.6.19-rc1-kexec-move_segment_code-i386.patch1
 Patch60002: 60002_linux-2.6.19-rc1-kexec-move_segment_code-x86_64.patch1
@@ -170,7 +173,8 @@ package if you need a reference to the options that can be passed to Linux
 kernel modules at load time.
 
 %prep
-%setup -q -n linux-%{kernel_version}
+%setup -q -n linux-%{kernel_source_version}
+%patch0 -p 1
 %patch60000 -p 1
 %patch60001 -p 1
 %patch60002 -p 1
