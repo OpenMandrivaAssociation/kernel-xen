@@ -1,18 +1,16 @@
 %define name                    kernel-xen
-%define version                 2.6.33.1
+%define version                 2.6.32.11
 %define rel                     1
-%define kernel_source_version   2.6.33
-%define kernel_patch_version    1
-%define kernel_version          %{kernel_source_version}.%{kernel_patch_version}
+%define kernel_version          2.6.32.11
 %define kernel_extraversion     xen-%{rel}mdv
 # ensures file uniqueness
-%define kernel_file_string      %{kernel_version}-xen-%{rel}mdv
+%define kernel_file_string      %{kernel_version}-%{kernel_extraversion}
 # ensures package uniqueness
 %define kernel_package_string   %{kernel_version}-%{rel}mdv
-%define kernel_source_dir       %{_prefix}/src/kernel-xen-%{kernel_version}-%{rel}mdv
-%define kernel_devel_dir        %{_prefix}/src/kernel-xen-devel-%{kernel_version}-%{rel}mdv
+%define kernel_source_dir       %{_prefix}/src/%{name}-%{kernel_package_string}
+%define kernel_devel_dir        %{_prefix}/src/%{name}-devel-%{kernel_package_string}
 
-%define _default_patch_fuzz 2
+%define _default_patch_fuzz 3
 
 %ifarch %ix86
 %define config %{SOURCE1}
@@ -27,81 +25,141 @@ Release:    %mkrel %{rel}
 Summary:    The Xen kernel
 Group:      System/Kernel and hardware
 License:    GPL
-Source0:    linux-%{kernel_source_version}.tar.bz2
+Source0:    linux-%{kernel_version}.tar.bz2
 Source1:    i386_defconfig-server
 Source2:    x86_64_defconfig-server
 
 Source12:   disable-mrproper-in-devel-rpms.patch
 Source13:   kbuild-really-dont-remove-bounds-asm-offsets-headers.patch
-Patch0:     patch-2.6.33.1.bz2
-Patch60000: 60000_add-console-use-vt.patch1
-Patch60001: 60001_linux-2.6.19-rc1-kexec-move_segment_code-i386.patch1
-Patch60002: 60002_linux-2.6.19-rc1-kexec-move_segment_code-x86_64.patch1
-Patch60003: 60003_ipv6-no-autoconf.patch1
-Patch60004: 60004_pci-guestdev.patch1
-Patch60005: 60005_pci-reserve.patch1
-Patch60006: 60006_xen3-auto-xen-arch.patch1
-Patch60007: 60007_xen3-auto-xen-drivers.patch1
-Patch60008: 60008_xen3-auto-include-xen-interface.patch1
-Patch60009: 60009_xen3-auto-xen-kconfig.patch1
-Patch60010: 60010_xen3-auto-common.patch1
-Patch60011: 60011_xen3-auto-arch-x86.patch1
-Patch60012: 60012_xen3-auto-arch-i386.patch1
-Patch60013: 60013_xen3-auto-arch-x86_64.patch1
-Patch60014: 60014_xen3-fixup-xen.patch1
-Patch60015: 60015_xen3-fixup-kconfig.patch1
-Patch60016: 60016_xen3-fixup-common.patch1
-Patch60017: 60017_xen3-fixup-arch-x86.patch1
-Patch60018: 60018_xen3-patch-2.6.18.patch1
-Patch60019: 60019_xen3-patch-2.6.19.patch1
-Patch60020: 60020_xen3-patch-2.6.20.patch1
-Patch60021: 60021_xen3-patch-2.6.21.patch1
-Patch60022: 60022_xen3-patch-2.6.22.patch1
-Patch60023: 60023_xen3-patch-2.6.23.patch1
-Patch60024: 60024_xen3-patch-2.6.24.patch1
-Patch60025: 60025_xen3-patch-2.6.25.patch1
-Patch60026: 60026_xen3-patch-2.6.26.patch1
-Patch60027: 60027_xen3-patch-2.6.27.patch1
-Patch60028: 60028_xen3-patch-2.6.28.patch1
-Patch60029: 60029_xen3-patch-2.6.29.patch1
-Patch60030: 60030_xen3-patch-2.6.30.patch1
-Patch60031: 60031_xen3-patch-2.6.31.patch1
-Patch60032: 60032_xen3-patch-2.6.32.patch1
-Patch60033: 60033_xen3-patch-2.6.33.patch1
-Patch60034: 60034_xen-balloon-max-target.patch1
-Patch60035: 60035_xen-blkback-cdrom.patch1
-Patch60036: 60036_xen-blktap-write-barriers.patch1
-Patch60037: 60037_xen-op-packet.patch1
-Patch60038: 60038_xen-blkfront-cdrom.patch1
-Patch60039: 60039_xen-sections.patch1
-Patch60040: 60040_xen-kconfig-compat.patch1
-Patch60041: 60041_xen-cpufreq-report.patch1
-Patch60042: 60042_xen-staging-build.patch1
-Patch60043: 60043_xen-sysdev-suspend.patch1
-Patch60044: 60044_xen-ipi-per-cpu-irq.patch1
-Patch60045: 60045_xen-virq-per-cpu-irq.patch1
-Patch60046: 60046_xen-clockevents.patch1
-Patch60047: 60047_xen-spinlock-poll-early.patch1
-Patch60048: 60048_xen-configurable-guest-devices.patch1
-Patch60049: 60049_xen-netback-nr-irqs.patch1
-Patch60050: 60050_xen-netback-notify-multi.patch1
-Patch60051: 60051_xen-netback-generalize.patch1
-Patch60052: 60052_xen-netback-multiple-tasklets.patch1
-Patch60053: 60053_xen-netback-kernel-threads.patch1
-Patch60054: 60054_xen-unpriv-build.patch1
-Patch60055: 60055_xen-x86-panic-no-reboot.patch1
-Patch60056: 60056_xen-x86-dcr-fallback.patch1
-Patch60057: 60057_xen-x86-consistent-nmi.patch1
-Patch60058: 60058_xen-x86-no-lapic.patch1
-Patch60059: 60059_xen-x86-pmd-handling.patch1
-Patch60060: 60060_xen-x86-bigmem.patch1
-Patch60061: 60061_xen-x86-machphys-prediction.patch1
-Patch60062: 60062_xen-x86-exit-mmap.patch1
-Patch60063: 60063_xen-x86-per-cpu-vcpu-info.patch1
-Patch60064: 60064_xen-x86_64-pgd-pin.patch1
-Patch60065: 60065_xen-x86_64-pgd-alloc-order.patch1
-Patch60066: 60066_xen-x86_64-dump-user-pgt.patch1
-Patch60067: 60067_xen-x86_64-note-init-p2m.patch1
+# suze patches
+Patch90:    bug-561933_uv_pat_is_gru_range.patch
+Patch91:    x86-Unify-fixup_irqs-for-32-bit-and-64-bit-kernels.patch
+Patch92:    SoN-23-mm-swapfile.patch
+Patch93:    x86-cpu-mv-display_cacheinfo-cpu_detect_cache_sizes.patch
+Patch94:    fix_clock_gettime_vsyscall_time_warp.diff
+### both uml framebuffer and xen need this one.
+Patch100:   add-console-use-vt
+# split out patches
+Patch101:   linux-2.6.19-rc1-kexec-move_segment_code-i386.patch
+Patch102:   linux-2.6.19-rc1-kexec-move_segment_code-x86_64.patch
+Patch103:   ipv6-no-autoconf
+Patch104:   pci-guestdev
+Patch105:   pci-reserve
+Patch106:   sfc-driverlink
+Patch107:   sfc-resource-driver
+Patch108:   sfc-driverlink-conditional
+Patch109:   sfc-external-sram
+Patch110:   tmem
+# bulk stuff, new files for xen
+Patch200:   xen3-auto-xen-arch.diff
+Patch201:   xen3-auto-xen-drivers.diff
+Patch202:   xen3-auto-include-xen-interface.diff
+# kconfig bits for xen
+Patch300:   xen3-auto-xen-kconfig.diff
+# common code changes
+Patch400:   xen3-auto-common.diff
+Patch401:   xen3-auto-arch-x86.diff
+Patch402:   xen3-auto-arch-i386.diff
+Patch403:   xen3-auto-arch-x86_64.diff
+# fixups due to upstream Xen parts
+Patch500:   xen3-fixup-xen
+Patch501:   sfc-set-arch
+Patch502:   sfc-endianness
+# newer changeset backports
+# changes outside arch/{i386,x86_64}/xen
+Patch700:   xen3-fixup-kconfig
+Patch701:   xen3-fixup-common
+Patch702:   xen3-fixup-arch-x86
+# ports of other patches
+Patch800:   xen3-patch-2.6.18
+Patch801:   xen3-patch-2.6.19
+Patch802:   xen3-patch-2.6.20
+Patch803:   xen3-patch-2.6.21
+Patch804:   xen3-patch-2.6.22
+Patch805:   xen3-patch-2.6.23
+Patch806:   xen3-patch-2.6.24
+Patch807:   xen3-patch-2.6.25
+Patch808:   xen3-patch-2.6.26
+Patch809:   xen3-patch-2.6.27
+Patch810:   xen3-patch-2.6.28
+Patch811:   xen3-patch-2.6.29
+Patch812:   xen3-patch-2.6.30
+Patch813:   xen3-patch-2.6.31
+Patch814:   xen3-patch-2.6.32
+Patch815:   xen3-patch-2.6.32.1-2
+Patch816:   xen3-patch-2.6.32.2-3
+Patch817:   xen3-patch-2.6.32.3-4
+Patch818:   xen3-patch-2.6.32.7-8
+Patch819:   xen3-patch-2.6.32.8-9
+Patch820:   xen3-patch-2.6.32.9-10
+Patch821:   xen3-seccomp-disable-tsc-option
+Patch822:   xen3-fix_clock_gettime_vsyscall_time_warp.diff
+Patch823:   xen3-x86-mcp51-no-dac
+#Patch824:   xen3-x86-64-preserve-large-page-mapping-for-1st-2mb-kernel-txt-with-config_debug_rodata
+#Patch825:   xen3-x86-64-align-rodata-kernel-section-to-2mb-with-config_debug_rodata
+#Patch826:   xen3-x86-mark_rodata_rw.patch
+#Patch827:   xen3-x86-ftrace-fix-rodata-1.patch
+#Patch828:   xen3-x86-ftrace-fix-rodata-3.patch
+Patch829:   xen3-x86-Remove-CPU-cache-size-output-for-non-Intel-too.patch
+Patch830:   xen3-x86-cpu-mv-display_cacheinfo-cpu_detect_cache_sizes.patch
+Patch831:   xen3-x86-Limit-the-number-of-processor-bootup-messages.patch
+Patch832:   xen3-x86_64_apic_consider_hotplug_for_mode_logical_flat.patch
+Patch833:   xen3-x86_ioapic_fix_out_of_order_gsi.patch
+Patch834:   xen3-x86-Reduce-per-cpu-warning-boot-up-messages.patch
+Patch835:   xen3-x86-pat-Update-page-flags-for-memtype-without-using-memtype_lock-V4.patch
+Patch836:   xen3-bug-561933_uv_pat_is_gru_range.patch
+Patch837:   xen3-x86-Fix-sched_clock_cpu-for-systems-with-unsynchronized-TSC.patch
+Patch838:   xen3-x86-Unify-fixup_irqs-for-32-bit-and-64-bit-kernels.patch
+Patch839:   xen3-x86-intr-remap-Avoid-irq_chip-mask-unmask-in-fixup_irqs-for-intr-remapping.patch
+Patch840:   xen3-x86-Remove-local_irq_enable-local_irq_disable-in-fixup_irqs.patch
+#Patch841:   xen3-vmw_pvscsi-scsi-driver-for-vmware-s-virtual-hba.patch
+#Patch842:   xen3-add-support-for-intel-cougar-point-chipset.patch
+#Patch843:   xen3-kdb-x86
+Patch844:   xen3-stack-unwind
+Patch845:   xen3-x86_64-unwind-annotations
+# bugfixes and enhancements
+Patch900:   xen-balloon-max-target
+Patch901:   xen-modular-blktap
+Patch902:   xen-blkback-bimodal-suse
+Patch903:   xen-blkif-protocol-fallback-hack
+Patch904:   xen-blkback-cdrom
+Patch905:   xen-blktap-write-barriers
+Patch906:   xen-op-packet
+Patch907:   xen-blkfront-cdrom
+Patch908:   xen-sections
+Patch909:   xen-swiotlb-heuristics
+Patch910:   xen-kconfig-compat
+Patch911:   xen-cpufreq-report
+Patch912:   xen-staging-build
+Patch913:   xen-sysdev-suspend
+Patch914:   xen-ipi-per-cpu-irq
+Patch915:   xen-virq-per-cpu-irq
+Patch916:   xen-spinlock-poll-early
+Patch917:   xen-configurable-guest-devices
+Patch918:   xen-netback-nr-irqs
+Patch919:   xen-netback-notify-multi
+Patch920:   xen-netback-generalize
+Patch921:   xen-netback-multiple-tasklets
+Patch922:   xen-netback-kernel-threads
+Patch923:   xen-netfront-ethtool
+Patch924:   xen-unpriv-build
+Patch925:   xen-dcdbas
+Patch926:   xen-floppy
+Patch927:   xen-x86-panic-no-reboot
+Patch928:   xen-x86-dcr-fallback
+Patch929:   xen-x86-consistent-nmi
+Patch930:   xen-x86-no-lapic
+Patch931:   xen-x86-pmd-handling
+Patch932:   xen-x86-bigmem
+Patch933:   xen-x86-machphys-prediction
+Patch934:   xen-x86-exit-mmap
+Patch935:   xen-x86-per-cpu-vcpu-info
+Patch936:   xen-x86-xtime-lock
+Patch937:   xen-x86-time-per-cpu
+Patch938:   xen-x86_64-pgd-pin
+Patch939:   xen-x86_64-pgd-alloc-order
+Patch940:   xen-x86_64-dump-user-pgt
+Patch941:   xen-x86_64-note-init-p2m
 BuildRoot:  %{_tmppath}/%{name}-%{version}
 
 %description 
@@ -120,7 +178,7 @@ Requires(postun):	bootloader-utils
 %description -n kernel-xen-%{kernel_package_string}
 The XEN kernel.
 
-%package -n kernel-xen-devel-%{kernel_package_string}
+%package devel-%{kernel_package_string}
 Version:    1
 Release:    %mkrel 1
 Summary:    XEN kernel devel files
@@ -128,11 +186,11 @@ Group:      System/Kernel and hardware
 Provides:   kernel-devel = %{kernel_version}
 Autoreqprov: no
 
-%description -n kernel-xen-devel-%{kernel_package_string}
+%description devel-%{kernel_package_string}
 This package contains the kernel-devel files that should be enough to build 
 3rdparty drivers against for use with the %{kname}-%{buildrel}.
 
-%package -n kernel-xen-source-%{kernel_package_string}
+%package source-%{kernel_package_string}
 Version:    1
 Release:    %mkrel 1
 Summary:    XEN kernel sources
@@ -140,12 +198,12 @@ Group:      System/Kernel and hardware
 Provides:   kernel-source = %{kernel_version}
 Autoreqprov: no
 
-%description -n kernel-xen-source-%{kernel_package_string}
+%description source-%{kernel_package_string}
 This package contains the source code files for the Linux 
 kernel. Theese source files are only needed if you want to build your own 
 custom kernel that is better tuned to your particular hardware.
 
-%package -n kernel-xen-debug-%{kernel_package_string}
+%package debug-%{kernel_package_string}
 Version:  1
 Release:  %mkrel 1
 Summary:  Xen kernel debug files
@@ -154,18 +212,18 @@ Requires: glibc-devel
 Provides: kernel-debug = %{kernel_version}
 Autoreqprov: no
 
-%description -n kernel-xen-debug-%{kernel_package_string}
+%description debug-%{kernel_package_string}
 This package contains the kernel-debug files that should be enough to 
 use debugging/monitoring tool (like systemtap, oprofile, ...)
 
-%package -n kernel-xen-doc-%{kernel_package_string}
+%package doc-%{kernel_package_string}
 Version:    1
 Release:    %mkrel 1
 Summary:    XEN kernel documentation
 Group:      System/Kernel and hardware
 Autoreqprov: no
 
-%description -n kernel-xen-doc-%{kernel_package_string}
+%description doc-%{kernel_package_string}
 This package contains documentation files form the kernel source. Various
 bits of information about the Linux kernel and the device drivers shipped
 with it are documented in these files. You also might want install this
@@ -173,76 +231,8 @@ package if you need a reference to the options that can be passed to Linux
 kernel modules at load time.
 
 %prep
-%setup -q -n linux-%{kernel_source_version}
-%patch0 -p 1
-%patch60000 -p 1
-%patch60001 -p 1
-%patch60002 -p 1
-%patch60003 -p 1
-%patch60004 -p 1
-%patch60005 -p 1
-%patch60006 -p 1
-%patch60007 -p 1
-%patch60008 -p 1
-%patch60009 -p 1
-%patch60010 -p 1
-%patch60011 -p 1
-%patch60012 -p 1
-%patch60013 -p 1
-%patch60014 -p 1
-%patch60015 -p 1
-%patch60016 -p 1
-%patch60017 -p 1
-%patch60018 -p 1
-%patch60019 -p 1
-%patch60020 -p 1
-%patch60021 -p 1
-%patch60022 -p 1
-%patch60023 -p 1
-%patch60024 -p 1
-%patch60025 -p 1
-%patch60026 -p 1
-%patch60027 -p 1
-%patch60028 -p 1
-%patch60029 -p 1
-%patch60030 -p 1
-%patch60031 -p 1
-%patch60032 -p 1
-%patch60033 -p 1
-%patch60034 -p 1
-%patch60035 -p 1
-%patch60036 -p 1
-%patch60037 -p 1
-%patch60038 -p 1
-%patch60039 -p 1
-%patch60040 -p 1
-%patch60041 -p 1
-%patch60042 -p 1
-%patch60043 -p 1
-%patch60044 -p 1
-%patch60045 -p 1
-%patch60046 -p 1
-%patch60047 -p 1
-%patch60048 -p 1
-%patch60049 -p 1
-%patch60050 -p 1
-%patch60051 -p 1
-%patch60052 -p 1
-%patch60053 -p 1
-%patch60054 -p 1
-%patch60055 -p 1
-%patch60056 -p 1
-%patch60057 -p 1
-%patch60058 -p 1
-%patch60059 -p 1
-%patch60060 -p 1
-%patch60061 -p 1
-%patch60062 -p 1
-%patch60063 -p 1
-%patch60064 -p 1
-%patch60065 -p 1
-%patch60066 -p 1
-%patch60067 -p 1
+%setup -q -n linux-%{kernel_version}
+%apply_patches
 
 %build
 perl -p \
@@ -368,7 +358,7 @@ patch -p1 -d %{buildroot}%{kernel_devel_dir} -i %{SOURCE12}
 # disable bounds.h and asm-offsets.h removal
 patch -p1 -d %{buildroot}%{kernel_devel_dir} -i %{SOURCE13}
 
-%post -n kernel-xen-%{kernel_package_string}
+%post %{kernel_package_string}
 /sbin/installkernel %{kernel_file_string}
 pushd /boot > /dev/null
 if [ -L vmlinuz-xen ]; then
@@ -381,7 +371,7 @@ fi
 ln -sf initrd-%{kernel_file_string}.img initrd-xen.img
 popd > /dev/null
 
-%postun -n kernel-xen-%{kernel_package_string}
+%postun %{kernel_package_string}
 /sbin/installkernel -R %{kernel_file_string}
 pushd /boot > /dev/null
 if [ -L vmlinuz-xen ]; then
@@ -396,13 +386,13 @@ if [ -L initrd-xen.img ]; then
 fi
 popd > /dev/null
 
-%post -n kernel-xen-devel-%{kernel_package_string}
+%post devel-%{kernel_package_string}
 if [ -d /lib/modules/%{kernel_file_string} ]; then
     ln -sf %{kernel_devel_dir} /lib/modules/%{kernel_file_string}/build
     ln -sf %{kernel_devel_dir} /lib/modules/%{kernel_file_string}/source
 fi
 
-%preun -n kernel-xen-devel-%{kernel_package_string}
+%preun devel-%{kernel_package_string}
 if [ -L /lib/modules/%{kernel_file_string}/build ]; then
     rm -f /lib/modules/%{kernel_devel_string}/build
 fi
@@ -410,13 +400,13 @@ if [ -L /lib/modules/%{kernel_file_string}/source ]; then
     rm -f /lib/modules/%{kernel_devel_string}/source
 fi
 
-%post -n kernel-xen-source-%{kernel_package_string}
+%post source-%{kernel_package_string}
 if [ -d /lib/modules/%{kernel_file_string} ]; then
     ln -sf %{kernel_source_dir} /lib/modules/%{kernel_file_string}/build
     ln -sf %{kernel_source_dir} /lib/modules/%{kernel_file_string}/source
 fi
 
-%preun -n kernel-xen-source-%{kernel_package_string}
+%preun source-%{kernel_package_string}
 if [ -L /lib/modules/%{kernel_file_string}/build ]; then
     rm -f /lib/modules/%{kernel_source_string}/build
 fi
