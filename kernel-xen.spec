@@ -162,6 +162,7 @@ Patch940:   xen-x86_64-dump-user-pgt
 Patch941:   xen-x86_64-note-init-p2m
 BuildRoot:  %{_tmppath}/%{name}-%{version}
 
+BuildRequires:	make
 %description 
 The XEN kernel.
 
