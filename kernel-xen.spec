@@ -21,7 +21,7 @@
 
 Name:       %{name}
 Version:    %{version}
-Release:    %mkrel %{rel}
+Release:    %{rel}.1
 Summary:    The Xen kernel
 Group:      System/Kernel and hardware
 License:    GPL
@@ -168,7 +168,7 @@ The XEN kernel.
 
 %package -n kernel-xen-%{kernel_package_string}
 Version:    1
-Release:    %mkrel 2
+Release:    3
 Summary:    XEN kernel
 Group:      System/Kernel and hardware
 Provides:   kernel = %{kernel_version}
@@ -181,7 +181,7 @@ The XEN kernel.
 
 %package devel-%{kernel_package_string}
 Version:    1
-Release:    %mkrel 2
+Release:    3
 Summary:    XEN kernel devel files
 Group:      System/Kernel and hardware
 Provides:   kernel-devel = %{kernel_version}
@@ -193,7 +193,7 @@ This package contains the kernel-devel files that should be enough to build
 
 %package source-%{kernel_package_string}
 Version:    1
-Release:    %mkrel 2
+Release:    3
 Summary:    XEN kernel sources
 Group:      System/Kernel and hardware
 Provides:   kernel-source = %{kernel_version}
@@ -206,7 +206,7 @@ custom kernel that is better tuned to your particular hardware.
 
 %package debug-%{kernel_package_string}
 Version:  1
-Release:  %mkrel 2
+Release:  3
 Summary:  Xen kernel debug files
 Group:    Development/Debug
 Requires: glibc-devel
@@ -219,7 +219,7 @@ use debugging/monitoring tool (like systemtap, oprofile, ...)
 
 %package doc-%{kernel_package_string}
 Version:    1
-Release:    %mkrel 2
+Release:    3
 Summary:    XEN kernel documentation
 Group:      System/Kernel and hardware
 Autoreqprov: no
